@@ -1,21 +1,12 @@
 from flask import Flask, render_template ,request
 import sqlite3
-from flask_sqlalchemy import SQLAlchemy
+
 app = Flask(__name__)
-
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
-db = SQLAlchemy(app)
-
-class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True,autoincrement=True)
-    name = db.Column(db.String(100))
-    email = db.Column(db.String(100))
 
 
 @app.route('/')
 @app.route('/home')
 def home_page():
-    db.create_all()
     return render_template('home.html')
 
 @app.route('/market')
@@ -39,15 +30,12 @@ def dataentry():
 def add_record():
     name = request.form["name"]
     email = request.form["email"]
-
-    # Create a new user
-    new_user = User(name=name, email=email)
-
-    # Save the new user to the database
-    db.session.add(new_user)
-    db.session.commit()
-
-    return redirect("/")
+    conn = sqlite3.connect("granot.db")
+    cursor = conn.cursor()
+    cursor.execute('INSERT INTO users (name, email) VALUES (?, ?)', (name, email))
+    conn.commit()
+    conn.close()
+    return "Data Entered Successfully"
 
 
 
