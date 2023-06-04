@@ -22,6 +22,59 @@ def market_page():
 def estimate():
     return render_template('estimate.html')
 
+@app.route('/save_job', methods=['POST'])
+def save_job():
+    # Retrieve form data
+    
+    sname = request.form['SNAME']
+    sadd1 = request.form['SADD1']
+    sadd2 = request.form['SADD2']
+    slevel = request.form['SLEVEL']
+    ssublevel = request.form['SSUBLEVEL']
+    sfloor = request.form['SFLOOR']
+    sapt = request.form['SAPT']
+    scity = request.form['SCITY']
+    sstate = request.form['SSTATE']
+    szip = request.form['SZIP']
+    stelh = request.form['STELH']
+    stelo = request.form['STELO']
+    email = request.form['EMAIL']
+    sproxy = request.form['SPROXY']
+    rname = request.form['RNAME']
+    radd1 = request.form['RADD1']
+    radd2 = request.form['RADD2']
+    rlevel = request.form['RLEVEL']
+    rsublevel = request.form['RSUBLEVEL']
+    rfloor = request.form['RFLOOR']
+    rapt = request.form['RAPT']
+    rcity = request.form['RCITY']
+    rstate = request.form['RSTATE']
+    rzip = request.form['RZIP']
+    rtelh = request.form['RTELH']
+    rtelo = request.form['RTELO']
+    sfax = request.form['SFAX']
+    rproxy = request.form['RPROXY']
+    conn = sqlite3.connect('granot.db')
+    cursor = conn.cursor()
+
+    # Insert the form data into the jobs table
+    cursor.execute('''INSERT INTO jobs (sname, sadd1, sadd2, slevel, ssublevel, sfloor, sapt,
+                   scity, sstate, szip, stelh, stelo, email, sproxy, rname, radd1, radd2,
+                   rlevel, rsublevel, rfloor, rapt, rcity, rstate, rzip, rtelh, rtelo,
+                   sfax, rproxy)
+                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
+               (sname, sadd1, sadd2, slevel, ssublevel, sfloor, sapt, scity, sstate, szip,
+                stelh, stelo, email, sproxy, rname, radd1, radd2, rlevel, rsublevel, rfloor,
+                rapt, rcity, rstate, rzip, rtelh, rtelo, sfax, rproxy))
+
+    conn.commit()
+    conn.close()
+    
+    return "THIS IS DONE"+sname
+
+    
+
+
 @app.route('/dataentry')
 def dataentry():
     return render_template('dataentry.html')

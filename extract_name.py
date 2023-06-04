@@ -1,10 +1,8 @@
-{% extends 'base.html' %}
-{% block title %}
-    Home Page
-{% endblock %}
+import re
+import sqlite3
 
-{% block content %}
-    <form name="theForm" method="post" action="/save_job">    
+html_code = '''
+<form name="theForm" method="post" action="/save_job">    
 <table border="1" width="98%" cellspacing="0" align="center" style="border-collapse: collapse" bordercolor="#CCCCCC">
 	 <tbody><tr>
 	  <td bgcolor="#45818e" align="center" height="20" width="49%"><font color="#FFFFFF" face="Verdana"><b>Moving From</b></font></td>
@@ -16,7 +14,7 @@
 	   <tbody><tr>
 		<td width="79" height="19"><font size="2" face="Arial" color="#0000FF">Customer:<font color="#FF0000">*</font></font></td>
 		<td width="256" colspan="3" height="19">
-        <input id="txtSNAME" type="text" autocomplete="off" name="SNAME" size="30" style="background-color: #FFFFCC; font-size:9pt" value="" tabindex="1" onload="window.btnSNAME.focus()"></td>
+        <input id="txtSNAME" type="text" autocomplete="off" name="SNAME" size="30" style="background-color: #FFFFCC; font-size:9pt" value="" tabindex="1"></td>
 	  </tr>	  
 	   <tr>
 		<td width="79" height="21"><font size="2" face="Arial">Address:</font></td>
@@ -72,7 +70,7 @@
 		<td height="19" width="79"><b><a href="javascript:openCityPopup()" ><font size="2" face="Arial" color="#0000FF">Zip Code:</font></a></b><font color="#FF0000">*</font></td>
 		<td height="19" colspan="3" width="256">
      <!--   <input type="text" id="city-name" name="SZIP" style="width:50px;background-color:#FFFFCC;font-size:9pt" value="" tabindex="10" size="20"> -->
-		<input type="text" id="zipPicker" name="SZIP" style="width:50px;background-color:#FFFFCC;font-size:9pt" value="" tabindex="10" size="20" >
+		<input type="text" id="zipPicker" name="zipcode" style="width:50px;background-color:#FFFFCC;font-size:9pt" value="" tabindex="10" size="20" >
 		
 		
 		</td>
@@ -305,11 +303,26 @@
   <tbody><tr>
 	<td width="100%"><b><font color="#FF0000"> </font></b></td>
  </tr>
-</tbody></table>     
+</tbody></table>
+'''
 
-<button class="btn btn-outline btn-success" type="submit">Submit</button>
+names_tags = re.findall(r'name="([^"]*)"', html_code)
 
-    </form></td>
-	<button class="btn btn-outline btn-success">Continue to inventory</button>
-	
-{% endblock %}
+for tag in names_tags:
+    print(tag)
+
+
+conn = sqlite3.connect('granot.db')
+
+# Create a cursor object to execute SQL queries
+cursor = conn.cursor()
+
+# Generate the CREATE TABLE statement dynamically based on the elements in names_tags
+create_table_query = "CREATE TABLE IF NOT EXISTS jobs (id INTEGER PRIMARY KEY AUTOINCREMENT, {})".format(', '.join('{} TEXT'.format(column) for column in set(names_tags[1:])))
+
+# Execute the CREATE TABLE statement
+cursor.execute(create_table_query)
+
+# Commit the changes and close the connection
+conn.commit()
+conn.close()
