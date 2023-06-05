@@ -54,6 +54,7 @@ def save_job():
     rtelo = request.form['RTELO']
     sfax = request.form['SFAX']
     rproxy = request.form['RPROXY']
+    
     conn = sqlite3.connect('granot.db')
     cursor = conn.cursor()
 
@@ -62,7 +63,7 @@ def save_job():
                    scity, sstate, szip, stelh, stelo, email, sproxy, rname, radd1, radd2,
                    rlevel, rsublevel, rfloor, rapt, rcity, rstate, rzip, rtelh, rtelo,
                    sfax, rproxy)
-                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
+                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)''',
                (sname, sadd1, sadd2, slevel, ssublevel, sfloor, sapt, scity, sstate, szip,
                 stelh, stelo, email, sproxy, rname, radd1, radd2, rlevel, rsublevel, rfloor,
                 rapt, rcity, rstate, rzip, rtelh, rtelo, sfax, rproxy))
