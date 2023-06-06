@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}
+  Inventory Entry
+{% endblock %}
+
+{% block content %}
+  
+
+<body>
+    <h1>Inventory Entry</h1>
+    <form method="POST" action="/">
+        <label for="name">Name:</label>
+        <select name="name" id="name" class="select2">
+            {% for item in inventory %}
+            <option value="{{ item[0] }}">{{ item[0] }}</option>
+            {% endfor %}
+        </select>
+        <br>
+        <label for="quantity">Quantity:</label>
+        <input type="text" name="quantity" id="quantity">
+        <br>
+        <button type="submit">Add to List</button>
+    </form>
+
+    <!-- Add code to display the list here -->
+
+    <form method="POST" action="/save_inven">
+        <button type="submit" name="save">Save</button>
+    </form>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-rc.0/js/select2.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('.select2').select2();
+        });
+    </script>
+</body>
+
+{% endblock %}

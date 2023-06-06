@@ -1,7 +1,32 @@
-from flask import Flask, render_template ,request
+from flask import Flask, render_template, request
+from flask_wtf import FlaskForm
+from wtforms import SelectField, SubmitField, IntegerField
+from wtforms.validators import InputRequired
 import sqlite3
 
+
 app = Flask(__name__)
+
+app.config['SECRET_KEY'] = "Ibtisam"
+
+
+
+
+
+# Create a form
+class InventoryForm(FlaskForm):
+    name = SelectField('Name', choices=[])
+    quantity = IntegerField('Quantity', validators=[InputRequired()])
+    submit = SubmitField('Add')
+
+    # Initialize the form with the data from the database
+    def __init__(self):
+        super().__init__()
+        db = sqlite3.connect('granot.db')
+        c=db.cursor()
+        self.name.choices = [(item[0], item[0]) for item in c.execute('SELECT name FROM inventory')]
+
+
 
 
 @app.route('/')
@@ -21,6 +46,74 @@ def market_page():
 @app.route('/estimate')
 def estimate():
     return render_template('estimate.html')
+    
+@app.route('/add_inv', methods=['GET', 'POST'])
+def add_inv():
+
+    # Fetch the list from the database
+    conn = sqlite3.connect("granot.db")
+    cursor = conn.cursor()
+    cursor.execute("SELECT name FROM inventory")
+    inventory = cursor.fetchall()
+    conn.close()
+
+    return render_template('add_inv.html', inventory=inventory)
+
+@app.route('/add_inv2', methods=['GET', 'POST'])
+def add_inv2():
+    entries = []
+
+    if request.method == 'POST':
+        name = request.form['name']
+        quantity = request.form['quantity']
+        
+        # Create a dictionary for the new entry
+        entry = {'name': name, 'quantity': quantity}
+        
+        # Add the new entry to the list
+        entries.append(entry)
+
+    # Fetch the list from the database
+    conn = sqlite3.connect("granot.db")
+    cursor = conn.cursor()
+    cursor.execute("SELECT name FROM inventory")
+    inventory = cursor.fetchall()
+
+    if 'save' in request.form:
+        # Save the list to the database table
+        for entry in entries:
+            name = entry['name']
+            quantity = entry['quantity']
+            cursor.execute("INSERT INTO your_table_name (name, quantity) VALUES (?, ?)", (name, quantity))
+
+        conn.commit()
+
+        # Redirect to a success page or display a success message
+        return render_template('success.html')
+
+    conn.close()
+
+    return render_template('add_inv_2.html', inventory=inventory, entries=entries)
+
+@app.route('/add_inv3', methods=['GET', 'POST'])
+def add_inv3():
+    form = InventoryForm()
+    if form.validate_on_submit():
+        # Get the data from the form
+        name = form.name.data
+        quantity = form.quantity.data
+
+        # Add the item to the database
+        db = sqlite3.connect('granot.db')
+        c = db.cursor()
+        c.execute('INSERT INTO temp (name, size) VALUES (?, ?)', (name, quantity))
+        db.commit()
+
+        # Redirect to the index page
+        return redirect('/')
+
+    return render_template('add_inv3.html', form=form)
+
 
 @app.route('/save_job', methods=['POST'])
 def save_job():

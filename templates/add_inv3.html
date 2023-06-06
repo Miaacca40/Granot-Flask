@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Inventory</title>
+</head>
+<body>
+    <h1>Inventory</h1>
+
+    <form action="/" method="post">
+        <input type="text" name="name" placeholder="Name">
+        <input type="number" name="quantity" placeholder="Quantity">
+        <input type="submit" value="Add">
+    </form>
+
+    <ul>
+        {% for item in items %}
+            <li>{{ item.name }} ({{ item.quantity }})</li>
+        {% endfor %}
+    </ul>
+
+    <button id="save">Save</button>
+
+    <script>
+        const saveButton = document.getElementById('save');
+        saveButton.addEventListener('click', () => {
+            const formData = new FormData(document.querySelector('form'));
+            fetch('/save', {
+               method: 'POST',
+               data: formData,
+            });
+        });
+    </script>
+</body>
+</html>
